@@ -417,6 +417,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <!--Leaf Item elements-->
+    <ClCompile Include="pppoe.c" />
     <ClCompile Include="precomp.c">
       <AdditionalIncludeDirectories>..;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreProcessorDefinitions>%(PreProcessorDefinitions);NDIS_WDM=1</PreProcessorDefinitions>
@@ -426,7 +427,10 @@
     <ClCompile Include="filter.c" />
     <ClCompile Include="device.c" />
     <ClCompile Include="flt_dbg.c" />
+    <ClCompile Include="second_md5.c" />
+    <ClInclude Include="pppoe.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="second_md5.h" />
     <ResourceCompile Include="filter.rc" />
     <ClInclude Include="precomp.h" />
     <ClInclude Include="filter.h" />

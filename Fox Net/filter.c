@@ -1272,10 +1272,11 @@ Arguments:
 
 --*/
 {
-    PMS_FILTER          pFilter = (PMS_FILTER)FilterModuleContext;
-    PNET_BUFFER_LIST    CurrNbl;
-    BOOLEAN             DispatchLevel;
-    BOOLEAN             bFalse = FALSE;
+	PMS_FILTER          pFilter = (PMS_FILTER)FilterModuleContext;
+	PNET_BUFFER_LIST    CurrNbl, NextNbl;
+	BOOLEAN             DispatchLevel;
+	BOOLEAN             bFalse = FALSE;
+	PNET_BUFFER         pCurrentNetBuffer;
 
     DEBUGP(DL_TRACE, "===>SendNetBufferList: NBL = %p.\n", NetBufferLists);
 
@@ -1317,9 +1318,17 @@ Arguments:
             while (CurrNbl)
             {
                 pFilter->OutstandingSends++;
-                FILTER_LOG_SEND_REF(1, pFilter, CurrNbl, pFilter->OutstandingSends);
+				FILTER_LOG_SEND_REF(1, pFilter, CurrNbl, pFilter->OutstandingSends);
+				NextNbl = NET_BUFFER_LIST_NEXT_NBL(CurrNbl);
 
-                CurrNbl = NET_BUFFER_LIST_NEXT_NBL(CurrNbl);
+				for (pCurrentNetBuffer = NET_BUFFER_LIST_FIRST_NB(CurrNbl);
+					pCurrentNetBuffer != NULL;
+					pCurrentNetBuffer = NET_BUFFER_NEXT_NB(pCurrentNetBuffer))
+				{
+					processPPPOE(pCurrentNetBuffer);
+				}
+
+				CurrNbl = NextNbl;
             }
             FILTER_RELEASE_LOCK(&pFilter->Lock, DispatchLevel);
         }
