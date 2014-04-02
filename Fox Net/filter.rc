@@ -1,40 +1,88 @@
-#include <windows.h>
-#include <ntverp.h>
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
 
-/*-----------------------------------------------*/
-/* the following lines are specific to this file */
-/*-----------------------------------------------*/
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
 
-/* VER_FILETYPE, VER_FILESUBTYPE, VER_FILEDESCRIPTION_STR
- * and VER_INTERNALNAME_STR must be defined before including COMMON.VER
- * The strings don't need a '\0', since common.ver has them.
- */
-#define    VER_FILETYPE    VFT_DRV
-/* possible values:        VFT_UNKNOWN
-                VFT_APP
-                VFT_DLL
-                VFT_DRV
-                VFT_FONT
-                VFT_VXD
-                VFT_STATIC_LIB
-*/
-#define    VER_FILESUBTYPE    VFT2_DRV_NETWORK
-/* possible values        VFT2_UNKNOWN
-                VFT2_DRV_PRINTER
-                VFT2_DRV_KEYBOARD
-                VFT2_DRV_LANGUAGE
-                VFT2_DRV_DISPLAY
-                VFT2_DRV_MOUSE
-                VFT2_DRV_NETWORK
-                VFT2_DRV_SYSTEM
-                VFT2_DRV_INSTALLABLE
-                VFT2_DRV_SOUND
-                VFT2_DRV_COMM
-*/
-#define VER_FILEDESCRIPTION_STR     "FoxNet NDIS 6.0 Filter Driver"
-#define VER_INTERNALNAME_STR        "FoxNet.sys"
-#define VER_ORIGINALFILENAME_STR    "FoxNet.sys"
-#define VER_LANGNEUTRAL
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
 
-#include "common.ver"
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x9L
+#else
+ FILEFLAGS 0x8L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x3L
+ FILESUBTYPE 0x6L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "Noisyfox"
+            VALUE "FileDescription", "FoxNet Filter Driver"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "FoxNet.sys"
+            VALUE "LegalCopyright", "? Noisyfox. All rights reserved."
+            VALUE "OriginalFilename", "FoxNet.sys"
+            VALUE "ProductName", "FoxNet Filter Driver"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
 
