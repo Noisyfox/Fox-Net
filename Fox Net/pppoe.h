@@ -24,7 +24,7 @@ typedef struct _pppoe_session{
 	UCHAR version_type;
 	UCHAR code;
 	USHORT session_id;
-	USHORT length;
+	USHORT payload_length;
 }PPPOE_SESSION, *PPPPOE_SESSION;
 
 void processPPPOE(PNET_BUFFER pCurrentNetBuffer);

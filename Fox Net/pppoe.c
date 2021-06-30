@@ -5,6 +5,7 @@ void processPPPOE(PNET_BUFFER pCurrentNetBuffer){
 	PMDL                pMdl;
 	ULONG               ulOffset;
 	struct ether_header *pEthHeader = NULL;
+	PPPPOE				pPPPOEHeader = NULL;
 	ULONG               ulBufferLength = 0;
 	ULONG               NBDO;
 	ULONG               NBDL;
@@ -54,9 +55,11 @@ void processPPPOE(PNET_BUFFER pCurrentNetBuffer){
 		//KdPrint(("SrcMAC: %.2x-%.2x-%.2x-%.2x-%.2x-%.2x\n", pEthHeader->ether_shost[0], pEthHeader->ether_shost[1], pEthHeader->ether_shost[2], pEthHeader->ether_shost[3], pEthHeader->ether_shost[4], pEthHeader->ether_shost[5]));
 		// 验证pppoe
 		{
+#if DBG
 			UCHAR tl = pEthHeader->ether_type & 0xff;
 			UCHAR th = (pEthHeader->ether_type >> 8) & 0xff;
 			KdPrint(("Type  : %.2x%.2x\n", tl, th));
+#endif
 			//if (0x8864 == pEthHeader->ether_type || 0x6388 == pEthHeader->ether_type)KdPrint(("Is PPPOE!\n"));
 
 			if (0x6488 == pEthHeader->ether_type){// pppoe session
@@ -68,11 +71,15 @@ void processPPPOE(PNET_BUFFER pCurrentNetBuffer){
 				{
 					break;
 				}
-				length = ((pPPPOESession->length & 0xff) << 8) | ((pPPPOESession->length >> 8) & 0xff); // ppp包长度
+				length = ((pPPPOESession->payload_length & 0xff) << 8) | ((pPPPOESession->payload_length >> 8) & 0xff); // ppp包长度
+				ulBufferLength -= sizeof(PPPOE_SESSION);
 				//解析剩余的PPPOE头
-				//获取下一个MDL
-				{
-					PPPPOE pPPPOEHeader = NULL;
+				if (ulBufferLength >= length)
+				{ // 在同一个包中
+					pPPPOEHeader = (PPPPOE)(((PUCHAR)pPPPOESession) + sizeof(PPPOE_SESSION));
+				}
+				else {
+					//获取下一个MDL
 					PMDL nextMdl = NET_BUFFER_NEXT_NB(pMdl);
 					if (nextMdl == NULL)break;
 
@@ -91,39 +98,40 @@ void processPPPOE(PNET_BUFFER pCurrentNetBuffer){
 					{
 						break;
 					}
+				}
 
-					ASSERT(ulBufferLength >= length);
-					ASSERT(ulBufferLength >= sizeof(PPPOE));
+				ASSERT(ulBufferLength >= length);
+				ASSERT(ulBufferLength >= sizeof(PPPOE));
 
-					if (0x23c2 == pPPPOEHeader->protocol){
-						PPPP_CHAP pChap = (PPPP_CHAP)(((PUCHAR)pPPPOEHeader) + sizeof(PPPOE));
-						KdPrint(("CHAP found!\n"));
-						ulBufferLength -= sizeof(PPPOE);
-						if (ulBufferLength < sizeof(PPPP_CHAP))
+				if (0x23c2 == pPPPOEHeader->protocol){
+					PPPP_CHAP pChap = (PPPP_CHAP)(((PUCHAR)pPPPOEHeader) + sizeof(PPPOE));
+					KdPrint(("CHAP found!\n"));
+					ulBufferLength -= sizeof(PPPOE);
+					if (ulBufferLength < sizeof(PPPP_CHAP))
+					{
+						break;
+					}
+					if (0x2 == pChap->code)
+					{
+						KdPrint(("Response!\n"));
+						if (pChap->value_size == 0x10)
 						{
-							break;
-						}
-						if (0x2 == pChap->code)
-						{
-							KdPrint(("Response!\n"));
-							if (pChap->value_size == 0x10)
+							// 判断name是否是有前缀
+							PUCHAR pName = (&pChap->value) + pChap->value_size;
+							if (pName + 0x1 > (((PUCHAR)pChap) + pChap->length))
 							{
-								// 判断name是否是有前缀
-								PUCHAR pName = (&pChap->value) + pChap->value_size;
-								if (pName + 0x1 > (((PUCHAR)pChap) + pChap->length))
-								{
-									break;
-								}
-								if (pName[0] != '^' || pName[1] != '#')
-								{
-									break;
-								}
-								//hack!
-								NewChapSecondMd5(&pChap->value);
-								KdPrint(("Response hacked!\n"));
+								break;
 							}
+							if (pName[0] != '^' || pName[1] != '#')
+							{
+								break;
+							}
+							//hack!
+							NewChapSecondMd5(&pChap->value);
+							KdPrint(("Response hacked!\n"));
 						}
 					}
+
 				}
 			}
 		}
